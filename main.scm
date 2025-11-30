@@ -4,9 +4,9 @@
              (web uri)
              (sxml simple))
 (use-modules (ice-9 receive))
+(use-modules (srfi srfi-1))
 
 (load "git/git.scm")
-
 
 ; basics provided by Robert McAtee
 ; (github.com/robertmcatee/guile-web-server-example)
@@ -33,6 +33,14 @@
                   (if doctype (display doctype port))
                   (sxml->xml sxml port))))))
 
+; do not use 'respond on 404!!! otherwise html will load
+; use this instead
+(define (not-found request)
+  (values (build-response #:code 404)
+          (string-append "Resource not found: "
+                         (uri->string (request-uri request)))))
+
+; html parts
 (define heygit-head
   `(header
      (h1 "Hey Git!")
@@ -46,20 +54,10 @@
     (main
      (p "Welcome to the mafia"))))
 
-(define var1 "Hey Git!")
-
 (define explore-page
   `(,heygit-head
      (main
-      (p "Welcome to the mafia"))))
-
-(define page-404
-  `(h1 "404 - not found"))
-
-(define (not-found request)
-  (values (build-response #:code 404)
-          (string-append "Resource not found: "
-                         (uri->string (request-uri request)))))
+      (p "Welcome to the exploration zone"))))
 
 (define (site request body)
   (let ((url (uri-path (request-uri request))))
@@ -71,5 +69,5 @@
 
 (run-server site)
 
-; (display get-repositories)
-; (display (get-repository-info "hello"))
+; (display list-repositories)
+; (display (get-repository-files "sl"))

@@ -11,3 +11,15 @@
       (lambda ()
         (set-current-input-port old)
         (close-pipe pipe)))))
+
+(define (run-command command)
+  (with-input-from-pipe
+    command
+    read-string))
+
+(define (command-append . commands)
+  (fold-right
+   (lambda (str prev)
+     (string-append str " " prev))
+   ""
+   commands))
