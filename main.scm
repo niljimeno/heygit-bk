@@ -1,10 +1,10 @@
-(use-modules (web server))
-(use-modules (web request)
+(use-modules (web server)
+             (web request)
              (web response)
              (web uri)
              (sxml simple))
-(use-modules (ice-9 receive))
-(use-modules (srfi srfi-1))
+             (ice-9 receive)
+             (srfi srfi-1))
 
 (load "git/git.scm")
 
@@ -54,18 +54,45 @@
     (main
      (p "Welcome to the mafia"))))
 
-(define explore-page
+(define page-explore
   `(,heygit-head
-     (main
-      (p "Welcome to the exploration zone"))))
+    (main
+     (p "Welcome to the exploration zone")
+     (ul
+      ,(map
+        (lambda (repository)
+          `(a (@ (href ,(string-append "/repository/" repository)))
+                 (li ,repository)))
+        list-repositories)))))
+
+(define (page-repository repository)
+  `(,heygit-head
+    (main
+     (p "this is a repository!")
+     ,(map
+       (lambda (file)
+         `((a (@ (href ,file)) ,file)
+           (br)))
+       (get-repository-files repository)))))
 
 (define (site request body)
   (let ((url (uri-path (request-uri request))))
     (display url)
     (cond
-     ((equal? url "/") (respond page-home))
-     ((equal? url "/explore") (respond explore-page))
+     ((equal? url "/")
+      (respond page-home))
+     ((equal? url "/explore")
+      (respond page-explore))
+     ((equal? (first (get-page-sections url)) "repository")
+      (respond (page-repository (last (get-page-sections url)))))
      (else (not-found request)))))
+
+(define (slice l offset n)
+  (take (drop l offset) n))
+
+
+(define (get-page-sections url)
+  (drop (string-split url #\/) 1))
 
 (run-server site)
 
