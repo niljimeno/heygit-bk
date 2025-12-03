@@ -1,10 +1,16 @@
 (load "shell.scm")
 
 (define list-repositories
-  (string-split
-   (run-command
-     (command-append "ls" "-1a" "/var/git/"))
-   #\newline))
+  (drop-right
+   (string-split
+    (run-command
+     (command-append
+      "ls"
+      "-1a"
+      "-A"
+      "/var/git/"))
+    #\newline)
+   1 ))
 
 (define (get-repository-info name)
   (list
