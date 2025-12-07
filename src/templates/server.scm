@@ -1,3 +1,10 @@
+(define-module (templates server)
+  #:use-module (web response)
+  ;#:use-module (ice-9 receive)
+  #:use-module (sxml simple)
+  #:use-module (srfi srfi-1)
+  #:export (respond))
+
 ; basics provided by Robert McAtee
 ; (github.com/robertmcatee/guile-web-server-example)
 (define (templatize title body)

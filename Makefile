@@ -1,2 +1,2 @@
 run:
-	guile main.scm
+	guile src/main.scm

@@ -1,10 +1,15 @@
-(load "shell.scm")
+(define-module (git)
+  #:use-module ((git shell) #:prefix shell:)
+  #:use-module (srfi srfi-1)
+  #:export (get-repository-list)
+  #:export (get-repository-info)
+  #:export (get-repository-files))
 
-(define list-repositories
+(define (get-repository-list)
   (drop-right
    (string-split
-    (run-command
-     (command-append
+    (shell:run-command
+     (shell:command-append
       "ls"
       "-1a"
       "-A"
@@ -18,8 +23,8 @@
 
 (define (get-repository-files name)
   (string-split
-   (run-command
-    (command-append
+   (shell:run-command
+    (shell:command-append
      "git" "-C" (string-append "/var/git/" name)
      "ls-tree" "--name-only" "main" "-r"))
    #\newline))
